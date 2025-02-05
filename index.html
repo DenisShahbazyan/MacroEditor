@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Темная страница с валидацией и обработкой кода</title>
+    <style>
+        /* Общие стили для темной темы */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Основной контейнер страницы */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Контейнер для многострочных полей (горизонтальное расположение) */
+        .textareas {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        textarea {
+            flex: 1;
+            min-height: 150px;
+            width: 100%;
+            resize: none;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            color: #fff;
+        }
+
+        /* Контейнер для кнопок */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            border: none;
+            color: #fff;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* Контейнер для уведомлений */
+        #notification-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .notification {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
+        }
+
+        .notification.fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="textareas">
+            <!-- Первое поле для ввода кода -->
+            <textarea id="textarea1" placeholder="Введите код для валидации и обработки..."></textarea>
+            <!-- Второе поле только для чтения (результат обработки) -->
+            <textarea id="textarea2" readonly placeholder="Результат обработки кода"></textarea>
+        </div>
+        <div class="buttons">
+            <button id="btn1">Кнопка 1 (Обработать код)</button>
+            <button id="btn2">Кнопка 2</button>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений -->
+    <div id="notification-container"></div>
+
+    <script>
+        // Функция для отображения уведомления в правом нижнем углу
+        function showNotification(message) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            container.appendChild(notification);
+
+            // Через 1 секунду начинаем анимацию исчезновения
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                // После завершения анимации (0.5 сек) удаляем уведомление
+                setTimeout(() => {
+                    if (container.contains(notification)) {
+                        container.removeChild(notification);
+                    }
+                }, 500);
+            }, 1000);
+        }
+
+        // Функция валидации кода
+        function validateCode(code) {
+            if (!code) {
+                return false;
+            }
+            // Разбиваем код на строки, удаляем лишние пробелы и пустые строки.
+            const lines = code
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(line => line !== '');
+
+            // Для корректного чередования строк количество строк должно быть чётным:
+            // первая строка - Delay, вторая - MoveR, и так далее.
+            if (lines.length % 2 !== 0) {
+                return false;
+            }
+
+            // Регулярное выражение для проверки строки Delay:
+            // Должно быть: "Delay", пробел, число, пробел, "ms"
+            const delayRegex = /^Delay\s+(\d+)\s+ms$/;
+
+            // Регулярное выражение для проверки строки MoveR:
+            // Должно быть: "MoveR", пробел, число (с опциональным минусом), пробел, число (с опциональным минусом)
+            const moveRRegex = /^MoveR\s+(-?\d+)\s+(-?\d+)$/;
+
+            // Проходим по всем строкам и проверяем соответствие требованиям:
+            for (let i = 0; i < lines.length; i++) {
+                if (i % 2 === 0) {
+                    // Чётные строки (индексы 0, 2, 4, ...) должны соответствовать формату Delay.
+                    if (!delayRegex.test(lines[i])) {
+                        return false;
+                    }
+                } else {
+                    // Нечётные строки (индексы 1, 3, 5, ...) должны соответствовать формату MoveR.
+                    if (!moveRRegex.test(lines[i])) {
+                        return false;
+                    }
+                }
+            }
+
+            // Если все проверки прошли успешно, возвращаем true.
+            return true;
+        }
+
+        /**
+         * Функция, которая делит число на заданное количество частей.
+         * Для первых (partsCount - 1) частей берется целая часть от деления,
+         * а оставшаяся величина прибавляется к последней части.
+         *
+         * @param {number} num - исходное число
+         * @param {number} partsCount - количество частей (например, 4)
+         * @returns {number[]} Массив из partsCount чисел, сумма которых равна num.
+         */
+        function splitNumber(num, partsCount) {
+            // Вычисляем базовую часть – округление вниз
+            const base = Math.floor(num / partsCount);
+            // Для первых (partsCount - 1) частей используем base,
+            // а последняя часть = num - base*(partsCount - 1)
+            const parts = new Array(partsCount - 1).fill(base);
+            const last = num - base * (partsCount - 1);
+            parts.push(last);
+            return parts;
+        }
+
+        /**
+         * Функция, которая разбивает исходный код на «подкоманды».
+         * Исходный код должен состоять из пар строк:
+         *  - строка с форматом: "Delay <число> ms"
+         *  - следующая строка с форматом: "MoveR <число> <число>"
+         *
+         * Каждая пара разбивается на 4 подпары, при этом сумма значений в разбивке
+         * совпадает с исходными.
+         *
+         * @param {string} code - исходный код (несколько строк)
+         * @returns {string} Новый код, где каждая пара разбита на 4 подпары.
+         */
+        function splitCodeIntoParts(code) {
+            // Разбиваем на строки и убираем лишние пробелы/пустые строки
+            const lines = code
+                .split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(line => line !== '');
+
+            // Если строк нечётное число, значит формат нарушен (каждый Delay должен иметь свой MoveR)
+            if (lines.length % 2 !== 0) {
+                throw new Error("Неверный формат кода: должно быть чётное число строк.");
+            }
+
+            // Регулярные выражения для разбора строк
+            const delayRegex = /^Delay\s+(\d+)\s+ms$/;
+            const moveRRegex = /^MoveR\s+(-?\d+)\s+(-?\d+)$/;
+            const partsCount = 4; // число частей для разбивки каждой пары
+
+            const resultLines = [];
+
+            // Проходим по парам строк (Delay + MoveR)
+            for (let i = 0; i < lines.length; i += 2) {
+                const delayLine = lines[i];
+                const moveLine = lines[i + 1];
+
+                const delayMatch = delayLine.match(delayRegex);
+                const moveMatch = moveLine.match(moveRRegex);
+
+                if (!delayMatch || !moveMatch) {
+                    throw new Error(`Неверный формат на строках ${i + 1}–${i + 2}`);
+                }
+
+                // Извлекаем числовые значения
+                const delayValue = parseInt(delayMatch[1], 10);
+                const moveX = parseInt(moveMatch[1], 10);
+                const moveY = parseInt(moveMatch[2], 10);
+
+                // Разбиваем каждое число на 4 части
+                const delayParts = splitNumber(delayValue, partsCount);
+                const moveXParts = splitNumber(moveX, partsCount);
+                const moveYParts = splitNumber(moveY, partsCount);
+
+                // Для каждой из 4 частей формируем подпару команд
+                for (let j = 0; j < partsCount; j++) {
+                    resultLines.push(`Delay ${delayParts[j]} ms`);
+                    resultLines.push(`MoveR ${moveXParts[j]} ${moveYParts[j]}`);
+                }
+            }
+
+            // Собираем результат в строку (каждая команда на новой строке)
+            return resultLines.join('\n');
+        }
+
+        // Обработчик для кнопки 1: валидируем и обрабатываем код из первого поля
+        document.getElementById('btn1').addEventListener('click', function () {
+            const code = document.getElementById('textarea1').value;
+            if (validateCode(code)) {
+                try {
+                    const newCode = splitCodeIntoParts(code);
+                    document.getElementById('textarea2').value = newCode;
+                    showNotification('Код валиден и обработан');
+                } catch (error) {
+                    showNotification('Ошибка при обработке кода: ' + error.message);
+                }
+            } else {
+                showNotification('Ошибка валидации кода');
+            }
+        });
+
+        // Обработчик для кнопки 2
+        document.getElementById('btn2').addEventListener('click', function () {
+            showNotification('Вы нажали Кнопку 2');
+        });
+
+        // При клике по второму полю копируем его содержимое в буфер обмена
+        document.getElementById('textarea2').addEventListener('click', function () {
+            const text = this.value;
+            // Clipboard API работает только в безопасном контексте (HTTPS или localhost)
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('Содержимое скопировано в буфер обмена');
+                }).catch(err => {
+                    console.error('Ошибка копирования:', err);
+                    showNotification('Ошибка копирования содержимого');
+                });
+            } else {
+                // Фолбэк для небезопасного контекста или старых браузеров
+                const tempInput = document.createElement('textarea');
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                try {
+                    if (document.execCommand('copy')) {
+                        showNotification('Содержимое скопировано в буфер обмена');
+                    } else {
+                        throw new Error('Команда execCommand не сработала');
+                    }
+                } catch (err) {
+                    console.error('Ошибка копирования:', err);
+                    showNotification('Ошибка копирования содержимого');
+                }
+                document.body.removeChild(tempInput);
+            }
+        });
+    </script>
+</body>
+
+</html>
