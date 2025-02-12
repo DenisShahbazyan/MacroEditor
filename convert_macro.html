@@ -4,15 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Конвертер координат</title>
-    <link rel="stylesheet" href="./assets/soften_macro/css/style.css">
+    <title>Конвертер макроса из amc в lua</title>
+    <link rel="stylesheet" href="./assets/convert_macro/css/style.css">
 </head>
 
 <body>
     <div class="container">
         <div class="textareas">
             <!-- Первое поле для ввода кода -->
-            <textarea id="textarea1" placeholder="Введите код для конвертации..."></textarea>
+            <textarea id="textarea1" placeholder="Введите код для конвертации из *.amc в *.lua...
+
+Код должен быть в виде:
+
+    Delay 17 ms
+    MoveR -7 13
+    Delay 14 ms
+    MoveR -5 21
+
+Первая строка Delay, вторая MoveR и так далее. 
+И ничего другого кроме этих команд."></textarea>
             <!-- Второе поле только для чтения (результат обработки) -->
             <textarea id="textarea2" readonly placeholder="Результат конвертации кода"></textarea>
         </div>
@@ -59,7 +69,7 @@
 
     <script src="./assets/notification.js"></script>
     <script src="./assets/validation_amc.js"></script>
-    <script src="./assets/convert_amc.js"></script>
+    <script src="./assets/convert_macro/js/convert_amc.js"></script>
     <script src="./assets/convert_macro/js/script.js"></script>
 </body>
 

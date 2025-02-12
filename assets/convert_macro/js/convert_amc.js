@@ -7,11 +7,7 @@
  * @returns {string} Строка с координатами для вывода в textarea.
  */
 function extractCoordinatesString(code) {
-    // Разбиваем код на строки, убираем лишние пробелы и пустые строки.
-    const lines = code
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(line => line !== '');
+    const lines = cleanCode(code)
 
     // Регулярное выражение для команды MoveR.
     // Ожидаемый формат: "MoveR <число> <число>"

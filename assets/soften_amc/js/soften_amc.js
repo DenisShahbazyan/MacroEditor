@@ -31,16 +31,7 @@ function splitNumber(num, partsCount) {
  * @returns {string} Новый код, где каждая пара разбита на 4 подпары.
  */
 function splitCodeIntoParts(code) {
-    // Разбиваем на строки и убираем лишние пробелы/пустые строки
-    const lines = code
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(line => line !== '');
-
-    // Если строк нечётное число, значит формат нарушен (каждый Delay должен иметь свой MoveR)
-    if (lines.length % 2 !== 0) {
-        throw new Error("Неверный формат кода: должно быть чётное число строк.");
-    }
+    const lines = cleanCode(code)
 
     // Регулярные выражения для разбора строк
     const delayRegex = /^Delay\s+(\d+)\s+ms$/;

@@ -5,14 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Смягчитель макроса :)</title>
-    <link rel="stylesheet" href="./assets/soften_macro/css/style.css">
+    <link rel="stylesheet" href="./assets/soften_amc/css/style.css">
 </head>
 
 <body>
     <div class="container">
         <div class="textareas">
             <!-- Первое поле для ввода кода -->
-            <textarea id="textarea1" placeholder="Введите код для смягчения..."></textarea>
+            <textarea id="textarea1" placeholder="Введите код для смягчения...
+
+Код должен быть в виде:
+
+    Delay 17 ms
+    MoveR -7 13
+    Delay 14 ms
+    MoveR -5 21
+
+Первая строка Delay, вторая MoveR и так далее. 
+И ничего другого кроме этих команд."></textarea>
             <!-- Второе поле только для чтения (результат обработки) -->
             <textarea id="textarea2" readonly placeholder="Результат обработки кода"></textarea>
         </div>
@@ -59,8 +69,8 @@
 
     <script src="./assets/notification.js"></script>
     <script src="./assets/validation_amc.js"></script>
-    <script src="./assets/soft_amc.js"></script>
-    <script src="./assets/soften_macro/js/script.js"></script>
+    <script src="./assets/soften_amc/js/soften_amc.js"></script>
+    <script src="./assets/soften_amc/js/script.js"></script>
 </body>
 
 </html>

@@ -1,13 +1,23 @@
-// Функция валидации кода
+/**
+ * Разбиваем код на строки, убираем лишние пробелы и пустые строки.
+ *
+ * @param {string} code - исходный код с командами.
+ * @returns {string} очищенный код.
+ */
+function cleanCode(code) {
+    return code.split(/\r?\n/).map(line => line.trim()).filter(line => line !== '')
+}
+
+/**
+ * Функция для валидации исходного кода.
+ *
+ * @param {string} code - исходный код с командами.
+ * @returns {boolean} - true, если код валиден, false в противном случае.
+ */
 function validateCode(code) {
-    if (!code) {
-        return false;
-    }
-    // Разбиваем код на строки, удаляем лишние пробелы и пустые строки.
-    const lines = code
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(line => line !== '');
+    if (!code) { return false }
+
+    const lines = cleanCode(code)
 
     // Для корректного чередования строк количество строк должно быть чётным:
     // первая строка - Delay, вторая - MoveR, и так далее.
