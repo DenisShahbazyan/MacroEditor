@@ -1,0 +1,157 @@
+/* Общие стили для темной темы */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background-color: #121212;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/* Основной контейнер страницы */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+/* Контейнер для многострочных полей (горизонтальное расположение) */
+.textareas {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+textarea {
+    flex: 1;
+    min-height: 150px;
+    width: 100%;
+    resize: none;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #fff;
+}
+
+/* Контейнер для кнопок */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #333;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+/* Контейнер для уведомлений */
+#notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.notification {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+.notification.fade-out {
+    opacity: 0;
+}
+
+/* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1500;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: absolute;
+    background-color: #1e1e1e;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Стили для новых полей сенсы */
+.textarea-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.textarea-container label {
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.textarea-container input {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 4px;
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конвертер сенсы макроса *.amc</title>
+    <link rel="stylesheet" href="./assets/change_sens_amc/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="textareas">
+            <!-- Контейнер для левого поля -->
+            <div class="textarea-container">
+                <label for="sensitivity-current"></label>
+                <input type="text" id="sensitivity-current" placeholder="Введите текущую сенсу">
+                <!-- Первое поле для ввода кода -->
+                <textarea id="textarea1" placeholder="Введите код для изменения сенсы...
+
+Код должен быть в виде:
+
+    Delay 17 ms
+    MoveR -7 13
+    Delay 14 ms
+    MoveR -5 21
+
+Первая строка Delay, вторая MoveR и так далее. 
+И ничего другого кроме этих команд."></textarea>
+            </div>
+            <!-- Контейнер для правого поля -->
+            <div class="textarea-container">
+                <label for="sensitivity-required"></label>
+                <input type="text" id="sensitivity-required" placeholder="Введите необходимую сенсу">
+                <!-- Второе поле только для чтения (результат обработки) -->
+                <textarea id="textarea2" readonly placeholder="Результат конвертации кода"></textarea>
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="btn1">Конвертировать</button>
+            <button id="btn2">Помощь</button>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений -->
+    <div id="notification-container"></div>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Описание функционала</h2>
+            <p>
+                Этот инструмент позволяет изменить чувствительность макросов *.amc.
+            </p>
+            <p>
+                В левом верхнем поле введите текущую сенсу, а в правом верхнем поле необходимую сенсу.<br>
+                Далее в левом нижнем (большом) поле введите код макроса *.amc, а в правом нижнем (большом) получите новый код, под нужную сенсу.
+            </p>
+            <p>
+                Код должен быть в виде:
+            </p>
+            <ul>
+                <code>Delay 17 ms</code><br>
+                <code>MoveR -7 13</code><br>
+                <code>и так далее..</code>
+            </ul>
+            <p>
+                Первым должен обязательно идти <strong>Delay</strong>, вторым - <strong>MoveR</strong> и так далее.
+            </p>
+            <p>
+                При нажатии на кнопку <strong>Конвертировать</strong> происходит валидация и конвертация кода, итоговый результат отображается во втором поле.
+            </p>
+            <p>
+                Клик по второму полю копирует его содержимое в буфер обмена.
+            </p>
+        </div>
+    </div>
+
+    <script src="./assets/notification.js"></script>
+    <script src="./assets/validation_amc.js"></script>
+    <script src="./assets/change_sens_amc/js/change_sens_amc.js"></script>
+    <script src="./assets/change_sens_amc/js/script.js"></script>
+</body>
+
+</html>
